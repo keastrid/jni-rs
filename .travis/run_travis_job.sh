@@ -10,10 +10,6 @@ set -x
 shellcheck .travis/run_travis_job.sh
 shellcheck test_profile
 
-# Setup LD_LIBRARY_PATH for ITs
-# shellcheck source=/dev/null
-source test_profile
-
 # Install clippy
 if [[ ${TRAVIS_RUST_VERSION} == "nightly" ]];
 then
@@ -41,5 +37,12 @@ if [[ ${TRAVIS_RUST_VERSION} == "stable" ]]; then
   cargo test
 fi
 
-# Run all tests with invocation feature (enables JavaVM ITs)
+# Run all tests with invocation features (enables JavaVM ITs), using smart JVM discovery
+cargo test --features=invocation-dyn
+
+# Setup LD_LIBRARY_PATH for ITs
+# shellcheck source=/dev/null
+source test_profile
+
+# Run all tests with invocation feature (enables JavaVM ITs), linking the JVM library at compile time
 cargo test --features=invocation
